@@ -18,3 +18,20 @@ export class LoginDto {
     phoneNo: string
     otp: string
 }
+
+export class VenueRatingDto {
+    venueId: string
+    review: string
+    rating: number
+}
+
+export class EventDto {
+    slug: string
+    eventName: string
+    description: string
+    maxTickets: number
+    ticketPrice: number
+    startDate: string
+    endDate: string
+    isFree: boolean
+}

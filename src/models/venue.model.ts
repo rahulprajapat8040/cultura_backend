@@ -1,6 +1,8 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, PrimaryKey, Table } from "sequelize-typescript";
 import modelName from "src/utils/common/modelName";
 import { User } from "./user.model";
+import { VenueRatings } from "./venueRatings.model";
+import { Events } from "./events.model";
 
 @Table({ tableName: modelName.venue, modelName: modelName.venue, paranoid: true })
 export class Venue extends Model<Venue, Partial<Venue>> {
@@ -50,4 +52,9 @@ export class Venue extends Model<Venue, Partial<Venue>> {
     declare ownerId: string
     @BelongsTo(() => User)
     declare owner: User
+
+    @HasMany(() => VenueRatings)
+    venueRatting: VenueRatings[]
+    @HasMany(() => Events)
+    declare events: Events[]
 }

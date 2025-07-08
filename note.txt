@@ -1,0 +1,4 @@
+modeul = apis, models
+features = event, org, post, artist, models and apis creation
+description= apis created for event creation and get , models for post and hastags
+author = Rahul prajapat, JULY 8 , 18:10

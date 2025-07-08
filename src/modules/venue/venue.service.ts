@@ -44,8 +44,16 @@ export class VenueService {
             const offset = Number((page - 1) * limit)
             const venues = await this.venueModel.findAndCountAll({
                 where: { ownerId: user.id },
-                limit, offset
+                limit, offset,
             });
+            await Promise.all(venues.rows.map(async (v) => {
+                (v as any).dataValues.mediaFiles = await this.mediaFileModel.findAll(
+                    {
+                        where: { relatedId: v.id },
+                        order: [['order', 'ASC']] 
+                    }
+                );
+            }));
             const response = genratePagination(venues, page, limit);
             return responseSender(STRINGCONST.DATA_FOUND, HttpStatus.OK, true, response);
         } catch (error) {

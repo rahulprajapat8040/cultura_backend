@@ -12,7 +12,11 @@ const STRINGCONST = {
     VENUE_DELETED: "Venue deleted successfully",
     FILES_UPLOADED: "Files uploaded successfully",
     FILE_UPDATED: "File updated successfully",
-    FILE_REMOVED:"File removed successfully"
+    FILE_REMOVED: "File removed successfully",
+    VENUE_RATING_ADDED: "Thankyou For Your Review",
+    RATING_UPDATED: "You have updated you review rating successfully",
+    RATING_DELETED: "Your rating remvoed.",
+    EVENT_CREATED: "Congratulations your event has been registred successfully"
 
 }
 

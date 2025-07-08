@@ -5,6 +5,9 @@ import { RoleModel } from "./roles.model";
 import { Subscription } from "./Subscription.model";
 import { Venue } from "./venue.model";
 import { MediaFiles } from "./mediaFile.model";
+import { VenueRatings } from "./venueRatings.model";
+import { Events } from "./events.model";
+import { Tickets } from "./tickets.model";
 
 @Table({ tableName: modelName.users, modelName: modelName.users, paranoid: true })
 export class User extends Model<User, Partial<User>> {
@@ -60,4 +63,10 @@ export class User extends Model<User, Partial<User>> {
     declare venues: Venue[]
     @HasMany(() => MediaFiles)
     declare mediaFiles: MediaFiles[]
+    @HasMany(() => VenueRatings)
+    declare ratedVenues: VenueRatings[]
+    @HasMany(() => Events)
+    declare events: Events[]
+    @HasMany(() => Tickets)
+    declare eventTickets: Tickets[]
 }
