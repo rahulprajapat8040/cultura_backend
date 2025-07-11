@@ -8,6 +8,10 @@ import { MediaFiles } from "./mediaFile.model";
 import { VenueRatings } from "./venueRatings.model";
 import { Events } from "./events.model";
 import { Tickets } from "./tickets.model";
+import { Posts } from "./posts.model";
+import { Follow } from "./follow.model";
+import { PostView } from "./postView.model";
+import { PostLike } from "./postLike.model";
 
 @Table({ tableName: modelName.users, modelName: modelName.users, paranoid: true })
 export class User extends Model<User, Partial<User>> {
@@ -69,4 +73,14 @@ export class User extends Model<User, Partial<User>> {
     declare events: Events[]
     @HasMany(() => Tickets)
     declare eventTickets: Tickets[]
+    @HasMany(() => Posts)
+    declare posts: Posts[]
+    @HasMany(() => Follow, "followerId")
+    declare following: Follow[]
+    @HasMany(() => Follow, 'followingId')
+    declare followers: Follow[];
+    @HasMany(() => PostView)
+    declare postView: PostView[]
+    @HasMany(() => PostLike)
+    declare likedPost: PostLike[]
 }

@@ -12,5 +12,8 @@ export default {
     eventRequest: 'eventrequest',
     posts: 'posts',
     hashtags: 'hastags',
-    postHashtags: 'posthashtags'
+    postHashtags: 'posthashtags',
+    follow: "follow",
+    postView: 'postview',
+    postLike: 'postLike'
 }

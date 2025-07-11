@@ -41,4 +41,14 @@ export class EventsController {
     ) {
         return this.eventsService.getEventDetail(eventId)
     }
+
+    @Get("get-artist-finding-events")
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles("artist")
+    async getArtistiFindingEvents(
+        @Query('page') page: number,
+        @Query('limit') limit: number
+    ) {
+        return this.eventsService.getArtistiFindingEvents({ page, limit })
+    }
 }

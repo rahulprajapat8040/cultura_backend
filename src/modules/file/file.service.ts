@@ -37,20 +37,20 @@ export class FileService {
     async removeFile(files: any): Promise<void> {
         if (!files) {
             console.error("No files for delection")
-        };
-        try {
-            if (Array.isArray(files)) {
-                files.forEach((file) => {
-                    const path = file.path ? file.path : file
+        } else {
+            try {
+                if (Array.isArray(files)) {
+                    files.forEach((file) => {
+                        const path = file.path ? file.path : file
+                        fs.unlinkSync(path)
+                    })
+                } else {
+                    const path = files.path ? files.path : files
                     fs.unlinkSync(path)
-                })
-            } else {
-                const path = files.path ? files.path : files
-                fs.unlinkSync(path)
+                }
+            } catch (error) {
+                console.log(error)
             }
-        } catch (error) {
-            console.log(error)
-            throw new BadRequestException(error.message)
         }
     }
 }

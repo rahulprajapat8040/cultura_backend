@@ -2,6 +2,8 @@ import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, PrimaryKey, Ta
 import modelName from "src/utils/common/modelName";
 import { User } from "./user.model";
 import { PostHashtags } from "./postHashtag.model";
+import { PostView } from "./postView.model";
+import { PostLike } from "./postLike.model";
 
 @Table({ tableName: modelName.posts, modelName: modelName.posts, paranoid: true })
 export class Posts extends Model<Posts, Partial<Posts>> {
@@ -15,6 +17,11 @@ export class Posts extends Model<Posts, Partial<Posts>> {
         type: DataType.TEXT("long")
     })
     declare content: string
+    @Column({
+        type: DataType.INTEGER,
+        defaultValue: 0
+    })
+    declare viewCount: number
 
     @ForeignKey(() => User)
     @Column({
@@ -26,4 +33,8 @@ export class Posts extends Model<Posts, Partial<Posts>> {
 
     @HasMany(() => PostHashtags)
     declare postHashtags: PostHashtags[]
+    @HasMany(() => PostView)
+    declare postViews: PostView[]
+    @HasMany(() => PostLike)
+    declare postLikes: PostLike[]
 }

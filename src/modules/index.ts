@@ -7,9 +7,11 @@ import { VenueModule } from "./venue/venue.module";
 import { MediaFileModule } from "./mediaFile/mediaFile.module";
 import { UserModule } from "./user/user.module";
 import { EventsModule } from "./events/events.module";
+import { ArtistModule } from "./artist/artist.module";
 
 const Modules = [
     SequelizeModule.forFeature([User]),
-    DatabaseModule, RedisModule, AuthModule, VenueModule, MediaFileModule, UserModule, EventsModule
+    DatabaseModule, RedisModule, AuthModule, VenueModule, MediaFileModule, UserModule, EventsModule,
+    ArtistModule
 ];
 export default Modules;

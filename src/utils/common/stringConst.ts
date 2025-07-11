@@ -6,6 +6,7 @@ const STRINGCONST = {
     USER_NOT_FOUND: "We can not find the user by this phone number",
     USER_LOGIN: "Login Successfull",
     USER_LOGOUT: "Log out successfully",
+    USER_UPDATED: "Your account detail has been update",
     DATA_FOUND: "Data found successfully",
     DATA_NOT_FOUND: "Data not found",
     VENUE_CREATED: "Venue created successfully",
@@ -16,7 +17,13 @@ const STRINGCONST = {
     VENUE_RATING_ADDED: "Thankyou For Your Review",
     RATING_UPDATED: "You have updated you review rating successfully",
     RATING_DELETED: "Your rating remvoed.",
-    EVENT_CREATED: "Congratulations your event has been registred successfully"
+    EVENT_CREATED: "Congratulations your event has been registred successfully",
+    POST_CREATED: "Your post created successfully",
+    POST_VIEWED: "Post viewed",
+    POST_LIKED: "Post liked",
+    ARTIST_FOLLOWED: "Follow successfully",
+    ARTIST_UNFOLLOWED: "Un Followed successfully",
+    FOLLOW_SELF: "You can not follow your self"
 
 }
 

@@ -5,6 +5,8 @@ import { Events, MediaFiles, Tickets, User, Venue, VenueRatings } from "src/mode
 import { VenueRatingDto } from "src/utils/common/dto";
 import STRINGCONST from "src/utils/common/stringConst";
 import { genratePagination, responseSender, SendError } from "src/utils/helper/funcation.helper";
+import { MulterRequest } from "src/utils/types/multerRequest";
+import { FileService } from "../file/file.service";
 
 export class UserService {
     constructor(
@@ -13,7 +15,8 @@ export class UserService {
         @InjectModel(Venue) private readonly venueModel: typeof Venue,
         @InjectModel(MediaFiles) private readonly mediaFileModel: typeof MediaFiles,
         @InjectModel(Events) private readonly eventModel: typeof Events,
-        @InjectModel(Tickets) private readonly ticketModel: typeof Tickets
+        @InjectModel(Tickets) private readonly ticketModel: typeof Tickets,
+        private readonly fileService: FileService,
     ) { }
 
     async getUser(user: User) {
@@ -23,6 +26,27 @@ export class UserService {
                 throw new NotFoundException(STRINGCONST.USER_NOT_FOUND)
             }
             return responseSender(STRINGCONST.DATA_FOUND, HttpStatus.OK, true, userDetail)
+        } catch (error) {
+            SendError(error.message)
+        }
+    }
+
+    async updateAccount(req: MulterRequest) {
+        const { file, body } = await this.fileService.uploadFile<User>(req, 'profile')
+        try {
+            const user = req.user as User
+            const res = await this.userModel.findByPk(user.id)
+            if (!res) {
+                throw new NotFoundException(STRINGCONST.DATA_NOT_FOUND)
+            }
+            if (file.length) {
+                this.fileService.removeFile(res.profilePhoto)
+            }
+            await user.update({
+                ...body,
+                profilePhoto: file[0] ? file[0].path : body.profilePhoto
+            })
+            return responseSender(STRINGCONST.USER_UPDATED, HttpStatus.OK, true, user)
         } catch (error) {
             SendError(error.message)
         }

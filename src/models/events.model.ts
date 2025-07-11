@@ -28,6 +28,11 @@ export class Events extends Model<Events, Partial<Events>> {
     })
     declare description: string
     @Column({
+        type: DataType.TEXT("long"),
+        allowNull: false
+    })
+    declare proposal: string
+    @Column({
         type: DataType.INTEGER,
         allowNull: false
     })
@@ -46,10 +51,10 @@ export class Events extends Model<Events, Partial<Events>> {
     })
     declare endDate: string
     @Column({
-        type: DataType.ENUM("inrequest", "rejected", "finding_artist", "upcoming", "live", "ended", "canceled"),
+        type: DataType.ENUM("inrequest", "rejected", "finding_artist", "upcoming", "live", "ended", "canceled", "approved"),
         defaultValue: 'inrequest'
     })
-    declare status: "inrequest" | "rejected" | "finding_artist" | "upcoming" | "live" | "ended" | "canceled"
+    declare status: "inrequest" | "rejected" | "finding_artist" | "upcoming" | "live" | "ended" | "canceled" | "approved"
     @Column({
         type: DataType.BOOLEAN,
         defaultValue: false
