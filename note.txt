@@ -1,4 +1,4 @@
-module: new backend for the update new ui (The first commit)
-features: create completely new backend.
-description: as frontend ui completely changed the backend is also changed for this
-author: Rahul prajapat, 18 JULY, 10:15 
+module: apis and models
+features: create home page api and category , event creation model and apis
+description: apis for home page, event, category, file uploading feature
+author: Rahul prajapat, 18 JULY, 18:17 

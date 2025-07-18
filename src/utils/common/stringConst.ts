@@ -6,7 +6,9 @@ const STRINGCONST = {
     USER_EXIST: "An account with the same eamil exist.",
     INVALID_PASSWORD: 'Password not matched',
     LOGIN_SUCCESS: 'Login successfully',
-    LOG_OUT: "Logout successfully"
+    LOG_OUT: "Logout successfully",
+    DATA_ADDED: "Data added successfully",
+    DATA_FETCHED: "Data fetched successfully"
 };
 
 export default STRINGCONST;

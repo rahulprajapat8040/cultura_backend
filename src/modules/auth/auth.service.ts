@@ -19,6 +19,9 @@ export class AuthService {
 
     async sendOtp(email: string,) {
         try {
+            if (!email) {
+                SendError("Email is required")
+            }
             const otp = otpGenerator(6);
             await this.redisService.set(`${email}-otp`, otp, 300)
             return responseSender(STRINGCONST.OTP_SENT, HttpStatus.OK, true, { otp });

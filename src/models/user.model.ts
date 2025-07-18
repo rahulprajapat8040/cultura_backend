@@ -1,6 +1,7 @@
 import { Column, DataType, HasMany, Model, PrimaryKey, Table } from "sequelize-typescript";
 import modelName from "src/utils/common/modelName";
 import { DeviceInfo } from "./deviceInfo.model";
+import { Events } from "./events.model";
 
 @Table({ tableName: modelName.user, modelName: modelName.user, paranoid: true })
 export class User extends Model<User, Partial<User>> {
@@ -59,4 +60,6 @@ export class User extends Model<User, Partial<User>> {
 
     @HasMany(() => DeviceInfo)
     declare devices: DeviceInfo[]
+    @HasMany(() => Events)
+    declare events: Events[]
 }
