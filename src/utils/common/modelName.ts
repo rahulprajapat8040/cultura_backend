@@ -1,19 +1,7 @@
 export default {
-    deviceInfo: 'deviceinfo',
-    users: 'users',
-    homeBaner: 'homebanner',
-    roles: 'roles',
-    subscription: 'subscription',
+    deviceInfo: 'deviceInfo',
+    user: 'user',
+    userInterests: 'userInterests',
     events: 'events',
-    tickets: 'tickets',
-    venue: 'venue',
-    venueRatings: 'venueratings',
-    mediaFiles: 'mediafiles',
-    eventRequest: 'eventrequest',
-    posts: 'posts',
-    hashtags: 'hastags',
-    postHashtags: 'posthashtags',
-    follow: "follow",
-    postView: 'postview',
-    postLike: 'postLike'
+    payment: 'payment',
 }

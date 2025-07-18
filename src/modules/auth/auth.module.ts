@@ -3,14 +3,13 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { jwtConfig } from "src/config/jwt.config";
-import { DeviceInfo, RoleModel, User } from "src/models";
-import { AuthController } from "./auth.controller";
+import { DeviceInfo, User } from "src/models";
 import { AuthService } from "./auth.service";
-import { RedisModule } from "../redis/redis.module";
+import { AuthController } from "./auth.controller";
 
 @Module({
     imports: [
-        SequelizeModule.forFeature([User, DeviceInfo, RoleModel]),
+        SequelizeModule.forFeature([User, DeviceInfo]),
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: '.env'
@@ -19,11 +18,11 @@ import { RedisModule } from "../redis/redis.module";
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: jwtConfig
-        }),
-        RedisModule
+        })
     ],
     controllers: [AuthController],
-    providers: [AuthService, JwtModule],
-    exports: [AuthService, JwtModule]
+    providers: [AuthService],
+    exports: [JwtModule, AuthService]
 })
+
 export class AuthModule { }

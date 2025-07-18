@@ -1,19 +1,8 @@
-import { Column, DataType, HasMany, HasOne, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { Column, DataType, HasMany, Model, PrimaryKey, Table } from "sequelize-typescript";
 import modelName from "src/utils/common/modelName";
 import { DeviceInfo } from "./deviceInfo.model";
-import { RoleModel } from "./roles.model";
-import { Subscription } from "./Subscription.model";
-import { Venue } from "./venue.model";
-import { MediaFiles } from "./mediaFile.model";
-import { VenueRatings } from "./venueRatings.model";
-import { Events } from "./events.model";
-import { Tickets } from "./tickets.model";
-import { Posts } from "./posts.model";
-import { Follow } from "./follow.model";
-import { PostView } from "./postView.model";
-import { PostLike } from "./postLike.model";
 
-@Table({ tableName: modelName.users, modelName: modelName.users, paranoid: true })
+@Table({ tableName: modelName.user, modelName: modelName.user, paranoid: true })
 export class User extends Model<User, Partial<User>> {
     @PrimaryKey
     @Column({
@@ -25,62 +14,49 @@ export class User extends Model<User, Partial<User>> {
         type: DataType.STRING,
         allowNull: false
     })
-    declare fullName: string
+    declare name: string
     @Column({
         type: DataType.STRING,
         allowNull: false
     })
     declare email: string
     @Column({
-        type: DataType.STRING,
+        type: DataType.STRING
     })
-    declare phoneNo: string
+    declare password: string
     @Column({
         type: DataType.STRING
     })
-    declare countryCode: string
-    @Column({
-        type: DataType.DATEONLY,
-        allowNull: false
-    })
-    declare dob: string
+    declare profilePic: string
     @Column({
         type: DataType.STRING
     })
-    declare aboutYou: string
-    @Column({
-        type: DataType.ENUM("male", "female")
-    })
-    declare gender: 'male' | 'female'
+    declare websiteName: string
     @Column({
         type: DataType.STRING
     })
-    declare profilePhoto: string
+    declare company: string
+    @Column({
+        type: DataType.STRING
+    })
+    declare phone: string
+    @Column({
+        type: DataType.STRING
+    })
+    declare address: string
+    @Column({
+        type: DataType.STRING
+    })
+    declare city: string
+    @Column({
+        type: DataType.STRING
+    })
+    declare country: string
+    @Column({
+        type: DataType.STRING
+    })
+    declare pinCode: string
 
     @HasMany(() => DeviceInfo)
-    declare deviceInfo: DeviceInfo[]
-    @HasOne(() => RoleModel)
-    declare role: RoleModel
-    @HasMany(() => Subscription)
-    declare subscription: Subscription[]
-    @HasMany(() => Venue)
-    declare venues: Venue[]
-    @HasMany(() => MediaFiles)
-    declare mediaFiles: MediaFiles[]
-    @HasMany(() => VenueRatings)
-    declare ratedVenues: VenueRatings[]
-    @HasMany(() => Events)
-    declare events: Events[]
-    @HasMany(() => Tickets)
-    declare eventTickets: Tickets[]
-    @HasMany(() => Posts)
-    declare posts: Posts[]
-    @HasMany(() => Follow, "followerId")
-    declare following: Follow[]
-    @HasMany(() => Follow, 'followingId')
-    declare followers: Follow[];
-    @HasMany(() => PostView)
-    declare postView: PostView[]
-    @HasMany(() => PostLike)
-    declare likedPost: PostLike[]
+    declare devices: DeviceInfo[]
 }

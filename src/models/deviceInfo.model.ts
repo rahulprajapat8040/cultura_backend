@@ -2,7 +2,7 @@ import { BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } fro
 import modelName from "src/utils/common/modelName";
 import { User } from "./user.model";
 
-@Table({ tableName: modelName.deviceInfo, modelName: modelName.deviceInfo, paranoid: true })
+@Table({ tableName: modelName.deviceInfo, modelName: modelName.deviceInfo })
 export class DeviceInfo extends Model<DeviceInfo, Partial<DeviceInfo>> {
     @PrimaryKey
     @Column({
@@ -11,20 +11,17 @@ export class DeviceInfo extends Model<DeviceInfo, Partial<DeviceInfo>> {
     })
     declare id: string
     @Column({
-        type: DataType.STRING
+        type: DataType.STRING,
+        allowNull: false
     })
     declare deviceId: string
     @Column({
-        type: DataType.STRING
+        type: DataType.STRING,
+        allowNull: false
     })
     declare deviceToken: string
     @Column({
         type: DataType.STRING
-    })
-    declare accessToken: string
-    @Column({
-        type: DataType.STRING,
-        allowNull: true
     })
     declare otp: string
     @Column({
@@ -32,6 +29,10 @@ export class DeviceInfo extends Model<DeviceInfo, Partial<DeviceInfo>> {
         defaultValue: false
     })
     declare otpStatus: boolean
+    @Column({
+        type: DataType.STRING
+    })
+    declare accessToken: string
 
     @ForeignKey(() => User)
     @Column({

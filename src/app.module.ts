@@ -2,21 +2,16 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import Modules from './modules';
-import { AuthMiddleware } from './middleware/auth.middleware';
+import { AuthMiddleWare } from './middleware/auth.middleware';
+import { excludeRoutes } from './utils/common/excludedRoutes';
 
 @Module({
-  imports: [...Modules],
+  imports: Modules,
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware)
-      .exclude(
-        "auth/signup",
-        "auth/login",
-        "auth/send-otp",
-      )
-      .forRoutes('*path')
+    consumer.apply(AuthMiddleWare).exclude(...excludeRoutes).forRoutes("*path")
   }
 }

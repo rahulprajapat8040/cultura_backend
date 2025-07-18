@@ -1,56 +1,47 @@
-import { ConflictException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
-import { DeviceInfo, RoleModel, User } from "src/models";
-import { LoginDto, SignupDto } from "src/utils/common/dto";
-import STRINGCONST from "src/utils/common/stringConst";
-import { otpGenerator, parameterNotFound, responseSender, SendError } from "src/utils/helper/funcation.helper";
+import { DeviceInfo, User } from "src/models";
 import { RedisService } from "../redis/redis.service";
+import { otpGenerator, parameterNotFound, responseSender, SendError } from "src/utils/helper/funcation.helper";
+import { HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import STRINGCONST from "src/utils/common/stringConst";
+import { LoginDto, SignupDto } from "src/utils/dtos/auth.dto";
 import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from 'bcryptjs'
 
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectModel(DeviceInfo) private readonly deviceInfoModel: typeof DeviceInfo,
         @InjectModel(User) private readonly userModel: typeof User,
-        @InjectModel(RoleModel) private readonly roleModel: typeof RoleModel,
+        @InjectModel(DeviceInfo) private readonly deviceModel: typeof DeviceInfo,
         private readonly jwtService: JwtService,
-        private readonly redisService: RedisService,
+        private readonly redisService: RedisService
     ) { }
 
-    async sendOtp(phoneNo: string) {
+    async sendOtp(email: string,) {
         try {
-            const otp = otpGenerator(6).toString()
-            await this.redisService.set(`otp:${phoneNo}`, otp, 300)
-            return responseSender(STRINGCONST.OTP_SENT, HttpStatus.OK, true, { otp })
+            const otp = otpGenerator(6);
+            await this.redisService.set(`${email}-otp`, otp, 300)
+            return responseSender(STRINGCONST.OTP_SENT, HttpStatus.OK, true, { otp });
         } catch (error) {
             SendError(error.message)
         }
     }
 
-    async signup(singupDto: SignupDto) {
+    async signup(signupDto: SignupDto) {
         try {
-            const { fullName, email, phoneNo, countryCode, dob, gender, otp, deviceId, deviceToken } = singupDto
-            const existingPhone = await this.userModel.findOne({ where: { phoneNo } })
-            const existingEmail = await this.userModel.findOne({ where: { email } })
-            const storedOtp = await this.redisService.get(`otp:${phoneNo}`)
-            if (existingPhone) {
-                throw new ConflictException(STRINGCONST.PHONE_NUM_EXIST)
-            } else if (existingEmail) {
-                throw new ConflictException(STRINGCONST.PHONE_NUM_EXIST)
+            const isExist = await this.userModel.findOne({ where: { email: signupDto.email } })
+            if (isExist) {
+                SendError(STRINGCONST.USER_EXIST)
             }
-            if (!storedOtp || storedOtp !== otp) {
+            const storedOtp = await this.redisService.get(`${signupDto.email}-otp`)
+            if (!storedOtp || storedOtp !== signupDto.otp) {
                 SendError(STRINGCONST.INVALID_OTP)
             }
-            const user = await this.userModel.create({
-                fullName, email, phoneNo,
-                countryCode, dob, gender
-            })
-            const payload = { userId: user.id }
-            const accessToken = await this.jwtService.signAsync(payload);
-            await this.deviceInfoModel.create({ deviceId, deviceToken, accessToken, otp: String(storedOtp), otpStatus: true, userId: user.id })
-            await this.redisService.del(`otp:${phoneNo}`);
-            await this.roleModel.create({ userRole: 'user', userId: user.id });
-            (user as any).dataValues.accessToken = accessToken
+            const hashedPass = await bcrypt.hash(signupDto.password, 15)
+            const user = await this.userModel.create({ ...signupDto, password: hashedPass })
+            const accessToken = await this.jwtService.signAsync({ userId: user.id })
+            await this.deviceModel.create({ ...signupDto, userId: user.id, otpStatus: true, accessToken });
+            (user as any).dataValues.accessToken = accessToken;
             return responseSender(STRINGCONST.USER_SIGNUP, HttpStatus.CREATED, true, user)
         } catch (error) {
             SendError(error.message)
@@ -59,45 +50,58 @@ export class AuthService {
 
     async login(loginDto: LoginDto) {
         try {
-            const { deviceId, deviceToken, phoneNo, countryCode, otp } = loginDto
-            const user = await this.userModel.findOne({
-                where: { phoneNo, countryCode },
-                include: [this.roleModel]
-            })
-            if (!user) {
-                throw new NotFoundException(STRINGCONST.USER_NOT_FOUND)
+            const existUser = await this.userModel.findOne({
+                where: { email: loginDto.email },
+            });
+
+            if (!existUser) {
+                throw new NotFoundException(STRINGCONST.USER_NOT_FOUND);
             }
-            const storedOtp = await this.redisService.get(`otp:${phoneNo}`)
-            if (!storedOtp || storedOtp !== otp) {
-                SendError(STRINGCONST.INVALID_OTP)
+
+            const isMatched = await bcrypt.compare(
+                loginDto.password,
+                existUser.password
+            );
+
+            if (!isMatched) {
+                return SendError(STRINGCONST.INVALID_PASSWORD);
             }
-            const payload = { userId: user.id, role: user.role.userRole }
-            const accessToken = await this.jwtService.signAsync(payload)
-            await this.deviceInfoModel.create({ deviceId, deviceToken, accessToken, otp, otpStatus: true, userId: user.id })
-            await this.redisService.del(`otp:${phoneNo}`);
-            (user as any).dataValues.accessToken = accessToken
-            return responseSender(STRINGCONST.USER_LOGIN, HttpStatus.OK, true, user)
+
+            // Generate JWT access token
+            const accessToken = await this.jwtService.sign({
+                userId: existUser.id,
+            });
+
+            // Upsert device info
+            await this.deviceModel.upsert({
+                deviceId: loginDto.deviceId,
+                deviceToken: loginDto.deviceToken,
+                userId: existUser.id,
+                accessToken: accessToken
+            });
+            (existUser as any).dataValues.accessToken = accessToken;
+            return responseSender(STRINGCONST.LOGIN_SUCCESS, HttpStatus.OK, true, existUser)
         } catch (error) {
             SendError(error.message)
-        };
+        }
     }
 
     async logOut(deviceId: string) {
         try {
-            parameterNotFound(deviceId, "deviceId not found")
-            await this.deviceInfoModel.destroy({ where: { deviceId: deviceId }, force: true })
-            return responseSender(STRINGCONST.USER_LOGOUT, HttpStatus.OK, true, null)
+            parameterNotFound(deviceId, "deviceId is missing")
+            const device = await this.deviceModel.destroy({ where: { deviceId }, force: true })
+            return responseSender(STRINGCONST.LOG_OUT, HttpStatus.OK, true, device)
         } catch (error) {
             SendError(error.message)
         }
     }
 
-    async logOutAllDevice(user: User) {
-        try {
-            await this.deviceInfoModel.destroy({ where: { userId: user.id }, force: true })
-            return responseSender(STRINGCONST.USER_LOGOUT, HttpStatus.OK, true, null)
-        } catch (error) {
-            SendError(error.message)
-        }
-    }
+    // async logOutAllDevices() {
+    //     try {
+    //         const deivce = await this.deviceModel.destroy({ where: { userId} })
+    //     } catch (error) {
+    //         SendError(error.message)
+    //     }
+    // }
+
 }

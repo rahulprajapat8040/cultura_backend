@@ -1,25 +1,21 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { LoginDto, SignupDto } from "src/utils/common/dto";
-import { AuthGuard } from "src/guards/auth.guard";
-import { Request } from "express";
-import { User } from "src/models";
+import { LoginDto, SignupDto } from "src/utils/dtos/auth.dto";
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
     constructor(
-        private readonly authService: AuthService
+        private authService: AuthService
     ) { }
 
     @Post("send-otp")
     async sendOtp(
-        @Body('phoneNo') phoneNo: string,
-        @Body('countryCode') countryCode: string
+        @Body('email') email: string,
     ) {
-        return this.authService.sendOtp(phoneNo)
+        return this.authService.sendOtp(email)
     }
 
-    @Post('signup')
+    @Post("signup")
     async signup(
         @Body() signupDto: SignupDto
     ) {
@@ -33,19 +29,10 @@ export class AuthController {
         return this.authService.login(loginDto)
     }
 
-    @Get("logout")
-    @UseGuards(AuthGuard)
-    async logout(
+    @Get("log-out")
+    async logOut(
         @Query('deviceId') deviceId: string
     ) {
         return this.authService.logOut(deviceId)
-    }
-
-    @Get("log-out-all-devices")
-    @UseGuards(AuthGuard)
-    async logOutAllDevice(
-        @Req() req: Request
-    ) {
-        return this.authService.logOutAllDevice(req.user as User)
     }
 }

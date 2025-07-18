@@ -1,4 +1,4 @@
-module= event req, artist finding
-features = update event's status , apply requests
-description = apis for the update event's status and artist can apply for the being event's part
-author = Rahul prajapat, JULY 11 , 18:08
+module: new backend for the update new ui (The first commit)
+features: create completely new backend.
+description: as frontend ui completely changed the backend is also changed for this
+author: Rahul prajapat, 18 JULY, 10:15 
