@@ -50,17 +50,19 @@ export class UserService {
             const event = await this.eventModel.create({
                 ...body,
                 hostedById: user.id,
-                bannerImage: file[0] ? file[0].path : body.bannerImage
+                bannerImage: file.length ? file[0].path : body.bannerImage
             })
-            for (const item of JSON.parse(body.eventTickets)) {
-                await this.ticketModel.create({
-                    ...item,
-                    eventId: event.id
-                })
+            if (body.isFree === false || body.isFree === 'false') {
+                for (const item of JSON.parse(body.eventTickets)) {
+                    await this.ticketModel.create({
+                        ...item,
+                        eventId: event.id
+                    })
+                }
             }
             return responseSender(STRINGCONST.DATA_ADDED, HttpStatus.CREATED, true, event)
         } catch (error) {
-            this.fileService.removeFile(file[0].path)
+            console.log(error)
             SendError(error.message)
         }
     }
@@ -89,7 +91,7 @@ export class UserService {
                 onlineEvents,
                 trendingEvents
             ] = await Promise.all([
-                this.categoryModel.findAll({ limit }),
+                this.categoryModel.findAll({ limit, }),
                 this.locationEvents(latitude, longitude), // You may later filter based on location
                 this.eventModel.findAll({ limit, where: { isOnline: true } }),
                 this.eventModel.findAll({ limit }) // Replace with actual trending filter logic
@@ -133,6 +135,7 @@ export class UserService {
             attributes: {
                 include: [[distanceFormula, 'distance']]
             },
+            include: [{ model: this.categoryModel, attributes: ["name"] }],
             order: [[literal('distance'), 'ASC']],
             limit
         });

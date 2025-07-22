@@ -1,4 +1,4 @@
-module: apis and models
-features: create home page api and category , event creation model and apis
-description: apis for home page, event, category, file uploading feature
-author: Rahul prajapat, 18 JULY, 18:17 
+module: update api
+features: update create event , home page api
+description: apis updated
+author: Rahul prajapat, 22 JULY, 11:30 am

@@ -39,17 +39,17 @@ export class Events extends Model<Events, Partial<Events>> {
     declare endTime: string
     @Column({
         type: DataType.STRING,
-        allowNull: false
+        allowNull: true
     })
     declare location: string
     @Column({
         type: DataType.STRING,
-        allowNull: false
+        allowNull: true
     })
     declare latitude: string
     @Column({
         type: DataType.STRING,
-        allowNull: false
+        allowNull: true
     })
     declare longitude: string
     @Column({
@@ -86,6 +86,9 @@ export class Events extends Model<Events, Partial<Events>> {
         type: DataType.UUID
     })
     declare categoryId: string
+
+    @BelongsTo(() => Category)
+    declare category: Category
 
     @HasMany(() => EventTicket)
     declare eventTickets: EventTicket[]
